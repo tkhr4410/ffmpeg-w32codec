@@ -116,8 +116,10 @@ extern "C" LRESULT CALLBACK DriverProc(
 
 	default:
 		LOGD("%s: uMsg=0x%04x", __FUNCTION__, uMsg);
-		break;
+		if (uMsg < DRV_USER) {
+			return DefDriverProc(dwDriverId, hdrvr, uMsg, lParam1, lParam2);
+		} else {
+			return ACMERR_NOTPOSSIBLE;
+		}
 	}
-
-	return 0;
 }

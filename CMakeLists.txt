@@ -27,6 +27,7 @@ add_library(acmdrv SHARED
   src/acmdrv/acmdrv.def
 )
 target_link_libraries(acmdrv
+  winmm
   avcodec
   avutil
 )
