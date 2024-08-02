@@ -13,22 +13,22 @@ using namespace ffmpeg_w32codec::acmdrv;
 
 LRESULT driver::load(void)
 {
-	return TRUE;
+	return DRV_OK;
 }
 
 LRESULT driver::free(void)
 {
-	return TRUE;
+	return DRV_OK;
 }
 
 LRESULT driver::enable(void)
 {
-	return TRUE;
+	return DRV_OK;
 }
 
 LRESULT driver::disable(void)
 {
-	return TRUE;
+	return DRV_OK;
 }
 
 LRESULT driver::open(LPACMDRVOPENDESCW desc)
@@ -55,12 +55,12 @@ LRESULT driver::open(LPACMDRVOPENDESCW desc)
 LRESULT driver::close(context_t *driver)
 {
 	HeapFree(GetProcessHeap(), 0, driver);
-	return TRUE;
+	return DRV_OK;
 }
 
 LRESULT driver::query_configure(void)
 {
-	return FALSE;
+	return DRV_CANCEL;
 }
 
 LRESULT driver::about(HWND hWnd)
