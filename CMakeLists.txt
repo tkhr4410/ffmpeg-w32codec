@@ -11,6 +11,10 @@ link_directories(
   ${CMAKE_BINARY_DIR}/ffmpeg/out/bin
 )
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/out" CACHE PATH "..." FORCE)
+endif()
+
 if (MSVC)
   set_property(GLOBAL
     PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -44,4 +48,42 @@ add_executable(test_msacm32
 target_link_libraries(test_msacm32
   msacm32
   winmm
+)
+
+add_library(vcmdrv SHARED
+  src/common.cpp
+  src/vcmdrv/main.cpp
+  src/vcmdrv/driver.cpp
+  src/vcmdrv/ic.cpp
+  src/vcmdrv/vcmdrv.def
+)
+target_link_libraries(vcmdrv
+  winmm
+  avcodec
+  avutil
+  swscale
+)
+set_target_properties(vcmdrv PROPERTIES
+  PREFIX ""
+)
+
+set(VIDEO_CODECS iv50)
+if(MSVC)
+  set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/$<CONFIG>)
+else()
+  set(OUTPUT_DIR ${CMAKE_BINARY_DIR})
+endif()
+foreach(name ${VIDEO_CODECS})
+  add_custom_command(TARGET vcmdrv POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${OUTPUT_DIR}/$<TARGET_FILE_NAME:vcmdrv> ${OUTPUT_DIR}/vidc${name}.dll)
+endforeach()
+
+add_executable(test_msvfw32
+  src/common.cpp
+  tests/msvfw32/main.cpp
+)
+target_link_libraries(test_msvfw32
+  msvfw32
+  vfw32
 )
