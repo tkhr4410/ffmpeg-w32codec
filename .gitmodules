@@ -1,3 +1,6 @@
 [submodule "external/ffmpeg"]
 	path = external/ffmpeg
 	url = https://git.ffmpeg.org/ffmpeg.git
+[submodule "external/Windows-classic-samples"]
+	path = external/Windows-classic-samples
+	url = https://github.com/microsoft/Windows-classic-samples
