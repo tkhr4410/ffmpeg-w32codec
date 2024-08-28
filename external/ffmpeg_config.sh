@@ -1,7 +1,7 @@
 #!/bin/sh
 
-SRCDIR=${PWD}/external/ffmpeg/
-BUILDDIR=${PWD}/../build/ffmpeg/
+SRCDIR=${PWD}/ffmpeg/
+BUILDDIR=${PWD}/../../build/ffmpeg/
 
 DECODERS="adpcm_ms,adpcm_ima_wav,cinepak,indeo3,indeo5,mp1,mp2,mp3,mpeg1video,mpeg2video,msvideo1,pcm_alaw,pcm_mulaw,pcm_s16le,pcm_u8,vorbis"
 DEMUXERS="avi,mp3,mpegps,mpegvideo,ogg,wav"

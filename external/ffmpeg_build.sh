@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ${PWD}/../build/ffmpeg/
+cd ${PWD}/../../build/ffmpeg/
 
 make clean
 make -j8
