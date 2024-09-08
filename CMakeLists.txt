@@ -19,6 +19,7 @@ if (MSVC)
   set_property(GLOBAL
     PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 else ()
+  add_compile_options("-march=pentiumpro")
   add_link_options("-static")
 endif()
 
@@ -86,4 +87,84 @@ add_executable(test_msvfw32
 target_link_libraries(test_msvfw32
   msvfw32
   vfw32
+)
+
+set(WINDOWS_CLASSIC_SAMPLES_DIRECTSHOW
+  "external/Windows-classic-samples/Samples/Win7Samples/multimedia/directshow")
+
+if (MSVC)
+  set(DSHOW_EXTERN ${WINDOWS_CLASSIC_SAMPLES_DIRECTSHOW})
+else()
+  set(DSHOW_EXTERN "src/dsfilter")
+endif()
+
+add_library(strmbase STATIC
+  ${DSHOW_EXTERN}/baseclasses/amfilter.cpp
+  ${DSHOW_EXTERN}/baseclasses/amvideo.cpp
+  ${DSHOW_EXTERN}/baseclasses/combase.cpp
+  ${DSHOW_EXTERN}/baseclasses/dllentry.cpp
+  ${DSHOW_EXTERN}/baseclasses/dllsetup.cpp
+  ${DSHOW_EXTERN}/baseclasses/mtype.cpp
+  ${DSHOW_EXTERN}/baseclasses/refclock.cpp
+  ${DSHOW_EXTERN}/baseclasses/schedule.cpp
+  ${DSHOW_EXTERN}/baseclasses/sysclock.cpp
+  ${DSHOW_EXTERN}/baseclasses/transfrm.cpp
+  ${DSHOW_EXTERN}/baseclasses/wxdebug.cpp
+  ${DSHOW_EXTERN}/baseclasses/wxutil.cpp
+  ${DSHOW_EXTERN}/baseclasses/wxlist.cpp
+)
+target_include_directories(strmbase PRIVATE
+  ${DSHOW_EXTERN}/baseclasses
+)
+if (NOT MSVC)
+  target_compile_options(strmbase PRIVATE
+    -std=c++03
+    -Wno-microsoft-exception-spec
+    -Wno-c++11-compat-deprecated-writable-strings
+    -Wno-parentheses
+    -Wno-vexing-parse
+  )
+endif()
+
+add_library(dsfilter SHARED
+  src/common.cpp
+  src/dsfilter/main.cpp
+  src/dsfilter/dsfilter.cpp
+  src/dsfilter/input.cpp
+  src/dsfilter/output.cpp
+  src/dsfilter/typemap.cpp
+  src/dsfilter/dsfilter.def
+)
+target_include_directories(dsfilter PRIVATE
+  ${DSHOW_EXTERN}/baseclasses
+)
+if (NOT MSVC)
+  target_compile_options(dsfilter PRIVATE
+    -Wno-microsoft-exception-spec
+    -Wno-writable-strings
+  )
+endif()
+target_link_libraries(dsfilter
+  strmbase
+  strmiids
+  winmm
+  avcodec
+  avformat
+  avutil
+  swscale
+  swresample
+)
+set_target_properties(dsfilter PROPERTIES
+  OUTPUT_NAME "ffmpegds"
+  PREFIX ""
+  SUFFIX ".ax"
+)
+
+add_executable(test_quartz
+  src/common.cpp
+  tests/quartz/main.cpp
+)
+target_link_libraries(test_quartz
+  quartz
+  strmiids
 )
