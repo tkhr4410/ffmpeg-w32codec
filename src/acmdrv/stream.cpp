@@ -50,7 +50,7 @@ LRESULT stream::open(LPACMDRVSTREAMINSTANCE inst)
 
 	if (inst->pwfxDst->wFormatTag == WAVE_FORMAT_PCM) {
 		auto pcm_fmt = g_format_tags[0]->fmts;
-		for (DWORD i=0; pcm_fmt[i].channels != 0; i++) {
+		for (DWORD i=0; i<g_format_tags[0]->count; i++) {
 			if (inst->pwfxDst->nChannels != pcm_fmt[i].channels) {
 				continue;
 			}
