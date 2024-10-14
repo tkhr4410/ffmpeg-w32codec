@@ -439,6 +439,14 @@ DWORD CFFmpegStreamOut::ThreadProc(void)
 		}
 	}
 
+	while (true) {
+		packet = DequeuePacket();
+		if ((packet == nullptr) || (packet == (AVPacket *)-1)) {
+			break;
+		}
+		av_packet_free(&packet);
+	}
+
 	av_frame_free(&frame_org);
 	av_frame_free(&frame_cvt);
 

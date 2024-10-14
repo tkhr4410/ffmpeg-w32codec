@@ -517,6 +517,7 @@ DWORD CFFmpegDSFilter::ThreadProc(void)
 		} else if (packet->stream_index == audio_stream) {
 			m_pAudioOut->EnqueuePacket(packet);
 		}
+		packet = nullptr;
 	}
 
 	if (m_pVideoOut != nullptr) {
@@ -530,7 +531,9 @@ DWORD CFFmpegDSFilter::ThreadProc(void)
 
 	Reply(S_OK);
 
-	av_packet_free(&packet);
+	if (packet != nullptr) {
+		av_packet_free(&packet);
+	}
 
 	return 0;
 }

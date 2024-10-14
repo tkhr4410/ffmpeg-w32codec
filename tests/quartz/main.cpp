@@ -152,6 +152,9 @@ int main(int argc, char *argv[])
 	hr = pMediaEvent->WaitForCompletion(INFINITE, &event);
 	assert(SUCCEEDED(hr) || (hr == E_ABORT));
 
+	hr = pMediaControl->GetState(0, (OAFilterState *)&fs);
+	assert(SUCCEEDED(hr) && (fs == State_Running));
+
 	hr = pMediaControl->Stop();
 	assert(SUCCEEDED(hr));
 
