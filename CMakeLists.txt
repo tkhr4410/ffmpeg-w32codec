@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.20)
 
 project(ffmpeg-w32codec)
 
@@ -31,6 +31,10 @@ add_library(acmdrv SHARED
   src/acmdrv/stream.cpp
   src/acmdrv/acmdrv.def
 )
+if(NOT MSVC)
+  target_link_options(acmdrv PRIVATE
+    -Wl,${CMAKE_SOURCE_DIR}/src/acmdrv/acmdrv.def)
+endif()
 target_link_libraries(acmdrv
   winmm
   avcodec
@@ -58,6 +62,10 @@ add_library(vcmdrv SHARED
   src/vcmdrv/ic.cpp
   src/vcmdrv/vcmdrv.def
 )
+if(NOT MSVC)
+  target_link_options(vcmdrv PRIVATE
+    -Wl,${CMAKE_SOURCE_DIR}/src/vcmdrv/vcmdrv.def)
+endif()
 target_link_libraries(vcmdrv
   winmm
   avcodec
@@ -86,7 +94,9 @@ add_executable(test_msvfw32
 )
 target_link_libraries(test_msvfw32
   msvfw32
+  ole32
   vfw32
+  winmm
 )
 
 set(WINDOWS_CLASSIC_SAMPLES_DIRECTSHOW
@@ -116,6 +126,11 @@ add_library(strmbase STATIC
 target_include_directories(strmbase PRIVATE
   ${DSHOW_EXTERN}/baseclasses
 )
+target_link_libraries(strmbase
+  ole32
+  oleaut32
+  uuid
+)
 if (NOT MSVC)
   target_compile_options(strmbase PRIVATE
     -std=c++03
@@ -135,6 +150,10 @@ add_library(dsfilter SHARED
   src/dsfilter/typemap.cpp
   src/dsfilter/dsfilter.def
 )
+if(NOT MSVC)
+  target_link_options(dsfilter PRIVATE
+    -Wl,${CMAKE_SOURCE_DIR}/src/dsfilter/dsfilter.def)
+endif()
 target_include_directories(dsfilter PRIVATE
   ${DSHOW_EXTERN}/baseclasses
 )
@@ -165,6 +184,7 @@ add_executable(test_quartz
   tests/quartz/main.cpp
 )
 target_link_libraries(test_quartz
+  ole32
   quartz
   strmiids
 )
