@@ -185,6 +185,7 @@ WORD get_wave_format_tag(AVCodecID codec_id)
 	case AV_CODEC_ID_PCM_U8:		return 0x0001;
 	case AV_CODEC_ID_MP1:			return 0x0050;
 	case AV_CODEC_ID_MP2:			return 0x0050;
+	case AV_CODEC_ID_MP3:			return 0x0055;
 	default:
 		LOGE("%s: unsupported codec id %d", __FUNCTION__, codec_id);
 		return 0x0000;
