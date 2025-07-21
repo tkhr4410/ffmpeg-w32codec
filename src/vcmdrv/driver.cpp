@@ -60,6 +60,11 @@ LRESULT driver::open(ICOPEN *desc)
 		codec_id = AV_CODEC_ID_INDEO5;
 		break;
 
+	case mmioFOURCC('M', 'S', 'V', 'C'):
+	case mmioFOURCC('m', 's', 'v', 'c'):
+		codec_id = AV_CODEC_ID_MSVIDEO1;
+		break;
+
 	default:
 		LOGE("invalid handler 0x%08x", desc->fccHandler);
 		desc->dwError = ICERR_UNSUPPORTED;
