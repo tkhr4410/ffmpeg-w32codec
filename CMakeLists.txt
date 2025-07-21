@@ -76,7 +76,7 @@ set_target_properties(vcmdrv PROPERTIES
   PREFIX ""
 )
 
-set(VIDEO_CODECS iv50)
+set(VIDEO_CODECS iv50 msvc)
 if(MSVC)
   set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/$<CONFIG>)
 else()
