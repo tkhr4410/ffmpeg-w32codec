@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <vfw.h>
+#include <aviriff.h>
 
 #include <assert.h>
 
@@ -117,6 +118,7 @@ int main(int argc, char *argv[])
 		MMCKINFO mmck_xxdc;
 		MainAVIHeader avih;
 		AVIStreamHeader strh;
+		AVISTREAMHEADER strh_;
 		BITMAPINFOHEADER bi;
 		AVIINDEXENTRY *idx1;
 		DWORD idx1_count;
@@ -164,10 +166,36 @@ int main(int argc, char *argv[])
 			mmck_strh.ckid = ckidSTREAMHEADER;
 			err = mmioDescend(hmmio, &mmck_strh, &mmck_strl, MMIO_FINDCHUNK);
 			assert(err == MMSYSERR_NOERROR);
-			offset = mmioSeek(hmmio, mmck_strh.dwDataOffset, SEEK_SET);
-			assert(offset == mmck_strh.dwDataOffset);
-			len = mmioRead(hmmio, (HPSTR)&strh, sizeof(strh));
-			assert(len == sizeof(strh));
+			if (mmck_strh.cksize == sizeof(strh)) {
+				offset = mmioSeek(hmmio, mmck_strh.dwDataOffset, SEEK_SET);
+				assert(offset == mmck_strh.dwDataOffset);
+				len = mmioRead(hmmio, (HPSTR)&strh, sizeof(strh));
+				assert(len == sizeof(strh));
+			} else if (mmck_strh.cksize == sizeof(strh_) - 8) {
+				offset = mmioSeek(hmmio, mmck_strh.dwDataOffset - 8, SEEK_SET);
+				assert(offset == mmck_strh.dwDataOffset - 8);
+				len = mmioRead(hmmio, (HPSTR)&strh_, sizeof(strh_));
+				assert(len == sizeof(strh_));
+				assert(strh_.fcc == ckidSTREAMHEADER);
+				assert(strh_.cb == len - 8);
+				strh.fccType				= strh_.fccType;
+				strh.fccHandler				= strh_.fccHandler;
+				strh.dwFlags				= strh_.dwFlags;
+				strh.wPriority				= strh_.wPriority;
+				strh.wLanguage				= strh_.wLanguage;
+				strh.dwInitialFrames		= strh_.dwInitialFrames;
+				strh.dwScale				= strh_.dwScale;
+				strh.dwRate					= strh_.dwRate;
+				strh.dwStart				= strh_.dwStart;
+				strh.dwLength				= strh_.dwLength;
+				strh.dwSuggestedBufferSize	= strh_.dwSuggestedBufferSize;
+				strh.dwQuality				= strh_.dwQuality;
+				strh.dwSampleSize			= strh_.dwSampleSize;
+				strh.rcFrame.left			= strh_.rcFrame.left;
+				strh.rcFrame.top			= strh_.rcFrame.top;
+				strh.rcFrame.right			= strh_.rcFrame.right;
+				strh.rcFrame.bottom			= strh_.rcFrame.bottom;
+			}
 			if (strh.fccType != streamtypeVIDEO) {
 				continue;
 			}
